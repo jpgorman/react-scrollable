@@ -1,17 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 
-const maxStackLength = 50
-
-let eventStack = []
+let lastEvent = null
+let prevEvent = null
 let isDragging = false
-let xOffset = 0;
-
-function getMeta() {
-  return {
-    distance: getDistance(),
-    isDragging,
-  }
-}
 
 function getPageX(e) {
   if (e) {
@@ -21,22 +12,39 @@ function getPageX(e) {
 }
 
 function getDistance() {
-
-  if (eventStack.length > 0) {
-    const previous = eventStack[eventStack.length - 2]
-    const last = eventStack[eventStack.length - 1]
-    const dx = getPageX(previous) - getPageX(last)
+  if (lastEvent && prevEvent) {
+    const dx = prevEvent.pageX - lastEvent.pageX
     return dx
   }
 }
 
+function getVelocity() {
+  if (lastEvent && prevEvent) {
+    const dt = prevEvent.timeStamp - lastEvent.timeStamp
+    const dx = prevEvent.pageX - lastEvent.pageX
+    return dx / dt
+  }
+}
+
+function getMeta() {
+  return {
+    distance: getDistance(),
+    velocity: getVelocity(),
+    isDragging,
+  }
+}
+
 function addToEventStack(event) {
-  if (eventStack.length >= maxStackLength) eventStack.shift()
-  eventStack.push(event)
+  if (lastEvent) prevEvent = lastEvent
+  lastEvent = {
+    timeStamp: event.timeStamp,
+    pageX: getPageX(event),
+  }
 }
 
 function clearEventStack() {
-  eventStack = []
+  lastEvent = null
+  prevEvent = null
 }
 
 export default class Touchable extends React.Component {
@@ -50,10 +58,14 @@ export default class Touchable extends React.Component {
     this.onDrag = this.onDrag.bind(this)
   }
 
+  shouldComponentUpdate() {
+    return false
+  }
+
   onDrag(event){
     const {handler} = this.props
     addToEventStack(event)
-    handler(getMeta().distance)
+    handler(getMeta())
   }
 
   onDragStart(event) {
@@ -63,7 +75,9 @@ export default class Touchable extends React.Component {
   }
 
   onDragEnd(event) {
+    const {handler} = this.props
     isDragging = false
+    handler(getMeta())
     this.removeEvents()
   }
 
@@ -82,8 +96,14 @@ export default class Touchable extends React.Component {
   }
 
   render() {
+
+    const {width} = this.props
+
     return (
       <div
+        style = {{
+          width
+        }}
         id = "touchable"
         onTouchStart = {this.onDragStart}
         onMouseDown = {this.onDragStart}
@@ -94,4 +114,5 @@ export default class Touchable extends React.Component {
 
 Touchable.propTypes = {
   handler: React.PropTypes.func.isRequired,
+  width: React.PropTypes.number.isRequired,
 }

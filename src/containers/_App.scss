@@ -14,11 +14,11 @@ body {
   height: 200px;
   overflow-x: hidden;
   overflow-y: hidden;
-  width: 200px;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   position: absolute;
+  margin: 0;
 }
 #touchable {
   z-index: 999;
@@ -50,4 +50,5 @@ $total: 7;
   bottom: 0;
   width: 300px;
   padding-bottom: 10px;
+  list-style: none;
 }
