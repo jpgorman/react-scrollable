@@ -1,43 +1,73 @@
 import {merge} from 'ramda'
+import BezierEasing from "bezier-easing"
 
-const privateState = {
+const SCROLL_DURATION = 300
+
+let privateState = {
   isDragging: false,
   isAnimating: false,
-  totalScreens: 0,
+  previousScreen: 0,
   nextScreen: 0,
   offsetX: 0,
 }
 
 let loop = () => {}
 
+function timestamp() {
+  return window.performance ? window.performance.now() : Date.now()
+}
+
 function currentScreen({offsetX, width, totalScreens}) {
-  const current = Math.round(-1 * offsetX / width)
+  const current = Math.round(offsetX / width)
   return Math.max(0, Math.min(totalScreens - 1, current))
 }
 
-function chooseNextScreen({velocity, offsetX, width, lastScreen, totalScreens}) {
+function chooseNextScreen({velocity, offsetX, width, previousScreen, totalScreens}) {
 
   const actualCurrentScreen = currentScreen({offsetX, width, totalScreens})
-  if (actualCurrentScreen !== lastScreen) return actualCurrentScreen
-
-  privateState.nextScreen = lastScreen
+  if (actualCurrentScreen !== previousScreen) return actualCurrentScreen
+  privateState.nextScreen = actualCurrentScreen
 
   const THRESHOLD = 1
   const aboveThreshold = Math.abs(velocity) >= THRESHOLD
   const direction = Math.sign(velocity)
 
 
-  if (aboveThreshold && direction === 1) nextScreen--
-  if (aboveThreshold && direction === -1) nextScreen++
+  if (aboveThreshold && direction === 1) privateState.nextScreen--
+  if (aboveThreshold && direction === -1) privateState.nextScreen++
 
-  console.log(Math.max(0, Math.min(totalScreens - 1, nextScreen)), "nextScreen")
+  return Math.max(0, Math.min(totalScreens - 1, privateState.nextScreen))
+}
 
-  return Math.max(0, Math.min(totalScreens - 1, nextScreen))
+function setupScrolling(state, nextScreen) {
+  const startTime = timestamp()
+  const endTime = startTime + SCROLL_DURATION
+  // TODO consider choosing an easing function based on the initalVelocity
+  const bezierFunction = BezierEasing(0.25, 0.37, 0.5, 1)
+  const startPosition = state.offsetX
+  const endPosition = nextScreen * state.width
+
+  state.startPosition = startPosition
+  state.endPosition = endPosition
+  state.isAnimating = true
+  state.easingFunction = (now) => {
+    const bezierInput = Math.max(0, Math.min(1, (now - startTime) / (endTime - startTime)))
+    const r = bezierFunction.get(bezierInput)
+    return r * (endPosition - startPosition) + startPosition
+  }
 }
 
 export function animationLoop () {
 
   loop = () => {
+
+    if (privateState.isAnimating) {
+      privateState.offsetX = privateState.easingFunction(timestamp())
+      // Stop animating if animation has ended and position has settled
+      if (privateState.offsetX === privateState.endPosition) {
+        privateState.isAnimating = false
+      }
+    }
     this.setState(privateState)
     requestAnimationFrame(() => loop())
   }
@@ -45,6 +75,9 @@ export function animationLoop () {
   requestAnimationFrame(() => loop())
 }
 
+function mergeState() {
+  return merge(...arguments)
+}
 
 export function handler({distance, isDragging, velocity}) {
   const initializeScroll = privateState.isDragging && !isDragging
@@ -58,7 +91,7 @@ export function handler({distance, isDragging, velocity}) {
   }
 
   if (!privateState.isDragging && !privateState.isAnimating) {
-    privateState.lastScreen = currentScreen(privateState)
+    privateState.previousScreen = currentScreen(mergeState(this.state, privateState))
   }
 
   // Finger has touched the screen since last event so stop scrolling
@@ -69,9 +102,8 @@ export function handler({distance, isDragging, velocity}) {
 
   // Finger has moved off the screen since last event so scroll to next position
   if (initializeScroll) {
-    const nextScreen = chooseNextScreen(merge(privateState, this.state))
-    console.log(nextScreen, "nextScreen")
-    //setupScrolling(privateState, nextScreen, velocity)
+    privateState = mergeState(this.state, privateState)
+    setupScrolling(privateState, chooseNextScreen(privateState))
   }
 
 }
