@@ -12,27 +12,16 @@ export default class TodoList extends Component {
 
   render() {
 
-    const {offsetX, width} = this.props
+    const {offsetX, width, height} = this.props
     const style = prefixr({
       transform: `translateZ(0) translateX(${-1 * offsetX}px)`,
     })
 
     return (
       <div
+        ref="wrapper"
         style = {{width}}
         id="wrapper">
-        <ul
-          style = {style}
-          key="container"
-          id="container">
-          {this.props.todos.map((todo, index) =>
-            <Todo
-              {...todo}
-              width = {width}
-              index = {index}
-              key={index} />
-          )}
-        </ul>
       </div>
     )
   }

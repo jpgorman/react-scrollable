@@ -2,6 +2,8 @@ import {repeat} from 'ramda'
 import React, { Component, PropTypes } from 'react'
 import TodoList from '../components/TodoList'
 import Touchable from '../components/Touchable'
+import Canvas from '../components/Canvas'
+import Screen from '../components/Screen'
 import {handler, animationLoop} from '../helpers/handler'
 import './_App.scss'
 
@@ -11,6 +13,8 @@ const visibleTodos = repeat({
 
 
 const WIDTH = 320
+const HEIGHT = 200
+const TOTALSCREENS = 3
 
 class App extends Component {
 
@@ -19,7 +23,7 @@ class App extends Component {
     this.state = {
       offsetX: 0,
       width: WIDTH,
-      totalScreens: visibleTodos.length,
+      totalScreens: TOTALSCREENS,
     };
     this.handler = handler.bind(this)
     this.animationLoop = animationLoop.bind(this)
@@ -36,10 +40,14 @@ class App extends Component {
         <Touchable
           width = {WIDTH}
           handler = {this.handler} />
-        <TodoList
-          width = {WIDTH}
+        <Canvas
           offsetX = {offsetX}
-          todos={visibleTodos} />
+          width = {WIDTH}
+          height = {HEIGHT}>
+          <Screen />
+          <Screen />
+          <Screen />
+        </Canvas>
       </div>
     )
   }
