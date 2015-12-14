@@ -36,12 +36,30 @@ export default class Screen extends Component {
       screenOffsetX,
       width,
       height,
-      fillStyle
+      fillStyle,
+      animationParam,
     } = nextProps
+
+    const leftOffset = screenOffsetX - offsetX
+    const centerXOffset = leftOffset + width * 0.5
+    const centerYOffset = height * 0.5
+    const ratioFromCenter = animationParam > 0.5 ? 2 * (1 - animationParam) : 2 * animationParam
+    let message = "Hello World"
+    const fontSize = 48
+
+    if (animationParam == 0){
+      message = "center"
+    }
 
     ctx.beginPath()
     ctx.fillStyle = this.getColor(screenOffsetX, width * 3)
-    ctx.fillRect(screenOffsetX - offsetX,0,width, height)
+    ctx.fillRect(leftOffset,0,width, height)
+
+    ctx.font = `${fontSize}px verdana, sans-serif`
+    ctx.fillStyle = `rgba(255, 255, 255, ${ratioFromCenter})`
+    ctx.textAlign = "start"
+    ctx.textBaseline = "middle"
+    ctx.fillText(message, centerXOffset - (ctx.measureText(message).width / 2), centerYOffset)
   }
 }
 

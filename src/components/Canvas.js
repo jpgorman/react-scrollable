@@ -54,7 +54,7 @@ export default class Canvas extends Component {
   render() {
 
     const {width, height, offsetX} = this.props
-    let screenNumber = 0
+    let index = 0
 
     return (
       <div
@@ -62,15 +62,18 @@ export default class Canvas extends Component {
         id="wrapper"
         style = {{width, height}}>
         {React.Children.map(this.props.children, (child) => {
-          const screenOffsetX = width * screenNumber++
+          const screenOffsetX = width * index++
+          const animationParam = Math.abs(offsetX - screenOffsetX) / width + 0.5
           const {props} = child
+
           return React.cloneElement(child, {
             width,
             height,
-            offsetX,
-            screenNumber,
-            screenOffsetX,
+            index,
             props,
+            offsetX,
+            screenOffsetX,
+            animationParam
           })
         })}
       </div>
