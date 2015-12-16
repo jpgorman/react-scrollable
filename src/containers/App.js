@@ -1,4 +1,4 @@
-import {repeat} from 'ramda'
+import {mergeAll} from 'ramda'
 import React, { Component, PropTypes } from 'react'
 import TodoList from '../components/TodoList'
 import Touchable from '../components/Touchable'
@@ -7,14 +7,14 @@ import Screen from '../components/Screen'
 import {handler, animationLoop} from '../helpers/handler'
 import './_App.scss'
 
-const visibleTodos = repeat({
-  text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.',
-}, 6)
-
-
-const WIDTH = 320
-const HEIGHT = 200
 const TOTALSCREENS = 3
+
+function getDimensions () {
+  return {
+    height: Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0),
+    width: Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0),
+  }
+}
 
 class App extends Component {
 
@@ -22,28 +22,49 @@ class App extends Component {
     super(props)
     this.state = {
       offsetX: 0,
-      width: WIDTH,
+      width: 0,
+      height: 0,
       totalScreens: TOTALSCREENS,
     };
     this.handler = handler.bind(this)
     this.animationLoop = animationLoop.bind(this)
+    this.setDimensions = this.setDimensions.bind(this)
+  }
+
+  setDimensions() {
+    this.setState(mergeAll([].concat(this.state, getDimensions())))
+  }
+
+  componentWillMount() {
+    this.setDimensions()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.setDimensions)
   }
 
   componentDidMount() {
+    window.addEventListener("resize", this.setDimensions)
     this.animationLoop()
   }
 
   render() {
-    const {offsetX} = this.state
-    return (
-      <div>
+    const {width, height, offsetX} = this.state
+    return width === 0 ? (<div>Loading...</div>) : (
+      <div
+        style = {{
+          width,
+          height,
+        }}
+        >
         <Touchable
-          width = {WIDTH}
+          width = {width}
+          height = {height}
           handler = {this.handler} />
         <Canvas
           offsetX = {offsetX}
-          width = {WIDTH}
-          height = {HEIGHT}>
+          width = {width}
+          height = {height}>
           <Screen />
           <Screen />
           <Screen />

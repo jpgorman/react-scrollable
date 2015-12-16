@@ -42,6 +42,7 @@ function chooseNextScreen({velocity, offsetX, width, previousScreen, totalScreen
 function setupScrolling(state, nextScreen) {
   const startTime = timestamp()
   const endTime = startTime + SCROLL_DURATION
+
   // TODO consider choosing an easing function based on the initalVelocity
   const bezierFunction = BezierEasing(0.25, 0.37, 0.5, 1)
   const startPosition = state.offsetX

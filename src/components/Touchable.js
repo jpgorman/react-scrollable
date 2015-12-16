@@ -58,8 +58,9 @@ export default class Touchable extends React.Component {
     this.onDrag = this.onDrag.bind(this)
   }
 
-  shouldComponentUpdate() {
-    return false
+  shouldComponentUpdate(nextProps) {
+    const {width, height} = this.props
+    return nextProps.width !== width || nextProps.height !== height
   }
 
   onDrag(event){
@@ -97,12 +98,13 @@ export default class Touchable extends React.Component {
 
   render() {
 
-    const {width} = this.props
+    const {width, height} = this.props
 
     return (
       <div
         style = {{
-          width
+          width,
+          height,
         }}
         id = "touchable"
         onTouchStart = {this.onDragStart}
@@ -115,4 +117,5 @@ export default class Touchable extends React.Component {
 Touchable.propTypes = {
   handler: React.PropTypes.func.isRequired,
   width: React.PropTypes.number.isRequired,
+  height: React.PropTypes.number.isRequired,
 }
