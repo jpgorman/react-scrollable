@@ -1,21 +1,15 @@
 import React, { Component, PropTypes } from 'react'
-import {makePlanet} from './helpers/make-planet'
+import {circumferenceCoords} from './helpers/circumference-coords'
 import R from 'ramda'
 
-const planetFactory = R.curry(function(rotation, orbitWidth, planetWidth, total, list){
-  const mapIndexed = R.addIndex(R.map)
-  return mapIndexed((val, idx) => makePlanet(rotation, orbitWidth, planetWidth, idx, total))(list)
-})
-
+const circumference = 2 * Math.PI
 let rotation = 0
 
 function generatePlanets(planets, orbitWidth, planetWidth) {
-  rotation += 0.001
-  return R.converge(
-   planetFactory(rotation, orbitWidth, planetWidth),
-   [R.length, R.identity]
-  )(planets)
+  rotation += 0.01
+  return planets.map((val, idx) => circumferenceCoords(rotation, orbitWidth, planetWidth, idx, planets.length))
 }
+
 
 export default class Screen extends Component {
 
@@ -55,6 +49,7 @@ export default class Screen extends Component {
       height,
       fillStyle,
       animationParam,
+      timeline,
     } = nextProps
 
     const leftOffset = screenOffsetX - offsetX
@@ -74,6 +69,7 @@ export default class Screen extends Component {
       "rbs",
       "rbs",
     ]
+
     const orbitWidth = width * 0.5
     const planetWidth = 20
 
@@ -85,8 +81,18 @@ export default class Screen extends Component {
     ctx.fillStyle = this.getColor(screenOffsetX, width * 3)
     ctx.fillRect(leftOffset,0,width, height)
 
-    generatePlanets(planets, orbitWidth, planetWidth).map((planet) => {
-      let {left, top} = planet
+
+    timeline.runWith(fn => fn(ctx))
+
+    const top = centerYOffset
+    const left = centerXOffset
+    ctx.beginPath();
+    ctx.arc(left, top, 200, 0, circumference, false);
+    ctx.fillStyle =`rgba(255, 255, 255, ${ratioFromCenter})`
+    ctx.fill();
+
+    /*generatePlanets(planets, orbitWidth, planetWidth).forEach((coords) => {
+      let {left, top} = coords
 
       left += centerXOffset - orbitWidth / 2
       top += centerYOffset - orbitWidth / 2
@@ -95,13 +101,8 @@ export default class Screen extends Component {
       ctx.arc(left, top, planetWidth, 0, 2 * Math.PI, false);
       ctx.fillStyle =`rgba(255, 255, 255, ${ratioFromCenter})`
       ctx.fill();
-    })
+    })*/
 
-    ctx.font = `${fontSize}px verdana, sans-serif`
-    ctx.fillStyle = `rgba(255, 255, 255, ${ratioFromCenter})`
-    ctx.textAlign = "start"
-    ctx.textBaseline = "middle"
-    ctx.fillText(message, centerXOffset - (ctx.measureText(message).width / 2), centerYOffset)
   }
 }
 

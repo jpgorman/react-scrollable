@@ -4,8 +4,22 @@ import TodoList from '../components/TodoList'
 import Touchable from '../components/Touchable'
 import Canvas from '../components/Canvas'
 import Screen from '../components/Screen'
+import Timeline from '../components/helpers/timeline'
 import {handler, animationLoop} from '../helpers/handler'
 import './_App.scss'
+
+const timeline = new Timeline()
+
+const aniamtion1 = timeline.add((ctx) => {
+  ctx.beginPath()
+  ctx.fillStyle = "red"
+  ctx.fillRect(100,100,200, 200)
+})
+const aniamtion2 = timeline.add((ctx) => {
+  ctx.beginPath()
+  ctx.fillStyle = "blue"
+  ctx.fillRect(0,0,200, 200)
+})
 
 const TOTALSCREENS = 3
 
@@ -65,9 +79,7 @@ class App extends Component {
           offsetX = {offsetX}
           width = {width}
           height = {height}>
-          <Screen />
-          <Screen />
-          <Screen />
+          <Screen timeline = {timeline} />
         </Canvas>
       </div>
     )
