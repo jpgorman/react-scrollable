@@ -1,4 +1,21 @@
 import React, { Component, PropTypes } from 'react'
+import {makePlanet} from './helpers/make-planet'
+import R from 'ramda'
+
+const planetFactory = R.curry(function(rotation, orbitWidth, planetWidth, total, list){
+  const mapIndexed = R.addIndex(R.map)
+  return mapIndexed((val, idx) => makePlanet(rotation, orbitWidth, planetWidth, idx, total))(list)
+})
+
+let rotation = 0
+
+function generatePlanets(planets, orbitWidth, planetWidth) {
+  rotation += 0.001
+  return R.converge(
+   planetFactory(rotation, orbitWidth, planetWidth),
+   [R.length, R.identity]
+  )(planets)
+}
 
 export default class Screen extends Component {
 
@@ -47,6 +64,19 @@ export default class Screen extends Component {
     let message = "Hello World"
     const fontSize = 48
 
+    const planets = [
+      "hsbc",
+      "natwest",
+      "halifax",
+      "rbs",
+      "natwest",
+      "halifax",
+      "rbs",
+      "rbs",
+    ]
+    const orbitWidth = width * 0.5
+    const planetWidth = 20
+
     if (animationParam == 0){
       message = "center"
     }
@@ -54,6 +84,18 @@ export default class Screen extends Component {
     ctx.beginPath()
     ctx.fillStyle = this.getColor(screenOffsetX, width * 3)
     ctx.fillRect(leftOffset,0,width, height)
+
+    generatePlanets(planets, orbitWidth, planetWidth).map((planet) => {
+      let {left, top} = planet
+
+      left += centerXOffset - orbitWidth / 2
+      top += centerYOffset - orbitWidth / 2
+
+      ctx.beginPath();
+      ctx.arc(left, top, planetWidth, 0, 2 * Math.PI, false);
+      ctx.fillStyle =`rgba(255, 255, 255, ${ratioFromCenter})`
+      ctx.fill();
+    })
 
     ctx.font = `${fontSize}px verdana, sans-serif`
     ctx.fillStyle = `rgba(255, 255, 255, ${ratioFromCenter})`
