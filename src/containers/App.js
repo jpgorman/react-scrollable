@@ -9,24 +9,34 @@ import Timeline from '../components/helpers/timeline'
 import {handler, animationLoop} from '../helpers/handler'
 import styles from './_App.scss'
 
-const timeline = new Timeline()
+const timeline1 = new Timeline()
+const timeline2 = new Timeline()
 
-const circumference = 2 * Math.PI
-const aniamtion1 = timeline.add((ctx, props) => {
+const aniamtion1 = timeline1.add((ctx, props) => {
   const {centerXOffset, centerYOffset, ratioFromCenter} = props
-  const circumference = 200
+  const circumference = 2 * Math.PI
+  const radius = 200
   ctx.beginPath()
-  ctx.arc(centerXOffset, centerYOffset, 200, 0, circumference, false);
+  ctx.arc(centerXOffset, centerYOffset, radius, 0, circumference, false)
   ctx.fillStyle =`rgba(255, 255, 255, ${ratioFromCenter})`
   ctx.fill()
 })
-const aniamtion2 = timeline.add((ctx, props) => {
+const aniamtion2 = timeline2.add((ctx, props) => {
+  const {centerXOffset, centerYOffset, ratioFromCenter} = props
+  const dimensions = {
+    width: 200,
+    height: 200,
+  }
   ctx.beginPath()
-  ctx.fillStyle = "blue"
-  ctx.fillRect(0,0,200, 200)
+  ctx.fillStyle =`rgba(255, 255, 255, ${ratioFromCenter})`
+  ctx.fillRect(
+    centerXOffset - dimensions.width / 2,
+    centerYOffset - dimensions.height / 2,
+    dimensions.width, dimensions.height
+  )
 })
 
-const TOTALSCREENS = 3
+const TOTALSCREENS = 2
 
 function getDimensions () {
   return {
@@ -84,7 +94,8 @@ class App extends Component {
           offsetX = {offsetX}
           width = {width}
           height = {height}>
-          <Screen timeline = {timeline} />
+          <Screen timeline = {timeline1} />
+          <Screen timeline = {timeline2} />
         </Canvas>
       </div>
     )
