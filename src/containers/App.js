@@ -1,21 +1,26 @@
 import {mergeAll} from 'ramda'
 import React, { Component, PropTypes } from 'react'
+import CSSModules from 'react-css-modules'
 import TodoList from '../components/TodoList'
 import Touchable from '../components/Touchable'
 import Canvas from '../components/Canvas'
 import Screen from '../components/Screen'
 import Timeline from '../components/helpers/timeline'
 import {handler, animationLoop} from '../helpers/handler'
-import './_App.scss'
+import styles from './_App.scss'
 
 const timeline = new Timeline()
 
-const aniamtion1 = timeline.add((ctx) => {
+const circumference = 2 * Math.PI
+const aniamtion1 = timeline.add((ctx, props) => {
+  const {centerXOffset, centerYOffset, ratioFromCenter} = props
+  const circumference = 200
   ctx.beginPath()
-  ctx.fillStyle = "red"
-  ctx.fillRect(100,100,200, 200)
+  ctx.arc(centerXOffset, centerYOffset, 200, 0, circumference, false);
+  ctx.fillStyle =`rgba(255, 255, 255, ${ratioFromCenter})`
+  ctx.fill()
 })
-const aniamtion2 = timeline.add((ctx) => {
+const aniamtion2 = timeline.add((ctx, props) => {
   ctx.beginPath()
   ctx.fillStyle = "blue"
   ctx.fillRect(0,0,200, 200)
@@ -87,4 +92,4 @@ class App extends Component {
 }
 
 // Wrap the component to inject dispatch and state into it
-export default App
+export default CSSModules(App, styles)

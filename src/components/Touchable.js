@@ -1,4 +1,6 @@
 import React, { Component, PropTypes } from 'react'
+import CSSModules from 'react-css-modules'
+import styles from './_touchable.scss'
 
 let lastEvent = null
 let prevEvent = null
@@ -47,7 +49,7 @@ function clearEventStack() {
   prevEvent = null
 }
 
-export default class Touchable extends React.Component {
+class Touchable extends React.Component {
 
   constructor(props) {
     super(props)
@@ -106,7 +108,7 @@ export default class Touchable extends React.Component {
           width,
           height,
         }}
-        id = "touchable"
+        styleName = "touchable"
         onTouchStart = {this.onDragStart}
         onMouseDown = {this.onDragStart}
        />
@@ -119,3 +121,5 @@ Touchable.propTypes = {
   width: React.PropTypes.number.isRequired,
   height: React.PropTypes.number.isRequired,
 }
+
+export default CSSModules(Touchable, styles);

@@ -50,6 +50,7 @@ export default class Screen extends Component {
       fillStyle,
       animationParam,
       timeline,
+      index,
     } = nextProps
 
     const leftOffset = screenOffsetX - offsetX
@@ -81,15 +82,23 @@ export default class Screen extends Component {
     ctx.fillStyle = this.getColor(screenOffsetX, width * 3)
     ctx.fillRect(leftOffset,0,width, height)
 
+    const propsForAnimation = {
+      centerYOffset,
+      centerXOffset,
+      animationParam,
+      ratioFromCenter,
+      index,
+    }
 
-    timeline.runWith(fn => fn(ctx))
 
-    const top = centerYOffset
-    const left = centerXOffset
-    ctx.beginPath();
-    ctx.arc(left, top, 200, 0, circumference, false);
-    ctx.fillStyle =`rgba(255, 255, 255, ${ratioFromCenter})`
-    ctx.fill();
+    timeline.runWith(fn => fn(ctx, propsForAnimation))
+
+    // const top = centerYOffset
+    // const left = centerXOffset
+    // ctx.beginPath();
+    // ctx.arc(left, top, 200, 0, circumference, false);
+    // ctx.fillStyle =`rgba(255, 255, 255, ${ratioFromCenter})`
+    // ctx.fill();
 
     /*generatePlanets(planets, orbitWidth, planetWidth).forEach((coords) => {
       let {left, top} = coords

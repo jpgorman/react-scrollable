@@ -1,0 +1,12 @@
+.touchable {
+  border: 1px solid gray;
+  height: 200px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  margin: 0;
+  z-index: 999;
+}

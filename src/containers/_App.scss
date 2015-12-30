@@ -1,54 +1,8 @@
-body {
+:global .body {
   font-family: "Helvetica Neue", Helvetica;
   font-weight: 200;
   letter-spacing: 1px;
   margin: auto;
   background: rgb(234, 235, 235);
   color: rgb(25, 25, 25);
-}
-
-
-#touchable,
-#wrapper {
-  border: 1px solid gray;
-  height: 200px;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  position: absolute;
-  margin: 0;
-}
-#touchable {
-  z-index: 999;
-}
-
-$width: 300;
-$total: 7;
-
-@mixin position() {
-  @for $i from 1 to $total {
-    #element#{$i} {
-      transform: translateX(#{($i - 1) * $width}px);
-      background-color: hsl($i * 30deg, 100%, 50%);
-    }
-  }
-}
-
-
-#container {
-  width: #{$width * ($total - 1)}px;
-  height: 100%;
-  @include position();
-}
-
-#container > li {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 300px;
-  padding-bottom: 10px;
-  list-style: none;
 }
