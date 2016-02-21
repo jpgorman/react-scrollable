@@ -1,8 +1,7 @@
-import React, { Component, PropTypes } from 'react'
-import {circumferenceCoords} from './helpers/circumference-coords'
-import R from 'ramda'
+import React, { Component, PropTypes } from "react"
+import {circumferenceCoords} from "./helpers/circumference-coords"
+import R from "ramda"
 
-const circumference = 2 * Math.PI
 let rotation = 0
 
 function generatePlanets(planets, orbitWidth, planetWidth) {
@@ -74,13 +73,13 @@ export default class Screen extends Component {
     const orbitWidth = width * 0.5
     const planetWidth = 20
 
-    if (animationParam == 0){
+    if (animationParam === 0) {
       message = "center"
     }
 
     ctx.beginPath()
     ctx.fillStyle = this.getColor(screenOffsetX, width * 3)
-    ctx.fillRect(leftOffset,0,width, height)
+    ctx.fillRect(leftOffset, 0, width, height)
 
     const propsForAnimation = {
       centerYOffset,

@@ -1,6 +1,6 @@
-import React, { Component, PropTypes } from 'react'
-import CSSModules from 'react-css-modules'
-import styles from './_touchable.scss'
+import React from "react"
+import CSSModules from "react-css-modules"
+import styles from "./_touchable.scss"
 
 let lastEvent = null
 let prevEvent = null
@@ -65,26 +65,26 @@ class Touchable extends React.Component {
     return nextProps.width !== width || nextProps.height !== height
   }
 
-  onDrag(event){
+  onDrag(event) {
     const {handler} = this.props
     addToEventStack(event)
     handler(getMeta())
   }
 
-  onDragStart(event) {
+  onDragStart() {
     this.bindEvents()
     clearEventStack()
     isDragging = true
   }
 
-  onDragEnd(event) {
+  onDragEnd() {
     const {handler} = this.props
     isDragging = false
     handler(getMeta())
     this.removeEvents()
   }
 
-  bindEvents(event) {
+  bindEvents() {
     document.addEventListener("mousemove", this.onDrag)
     document.addEventListener("mouseup", this.onDragEnd)
     document.addEventListener("touchmove", this.onDrag)

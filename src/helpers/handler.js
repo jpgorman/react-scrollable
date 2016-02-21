@@ -1,5 +1,6 @@
 import {merge} from 'ramda'
 import BezierEasing from "bezier-easing"
+import {timestamp} from './timestamp'
 
 const SCROLL_DURATION = 300
 
@@ -12,10 +13,6 @@ let privateState = {
 }
 
 let loop = () => {}
-
-function timestamp() {
-  return window.performance ? window.performance.now() : Date.now()
-}
 
 function currentScreen({offsetX, width, totalScreens}) {
   const current = Math.round(offsetX / width)

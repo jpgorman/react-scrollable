@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component, PropTypes } from "react"
 
 export default class Canvas extends Component {
 
@@ -20,9 +20,9 @@ export default class Canvas extends Component {
   }
 
   getChildContext() {
-      return {
-        ctx: this._ctx,
-      }
+    return {
+      ctx: this._ctx,
+    }
   }
 
   updateSize(props) {
@@ -47,7 +47,7 @@ export default class Canvas extends Component {
     this.forceUpdate()
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillUpdate() {
     this._canvas.getContext("2d").clearRect(0, 0, this._canvas.width, this._canvas.height)
   }
 
@@ -73,7 +73,7 @@ export default class Canvas extends Component {
             props,
             offsetX,
             screenOffsetX,
-            animationParam
+            animationParam,
           })
         })}
       </div>
@@ -85,8 +85,10 @@ Canvas.displayName = "Canvas"
 Canvas.childContextTypes = {
   ctx: PropTypes.object,
 }
+
 Canvas.propTypes = {
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   children: PropTypes.node,
+  offsetX: PropTypes.number,
 }
